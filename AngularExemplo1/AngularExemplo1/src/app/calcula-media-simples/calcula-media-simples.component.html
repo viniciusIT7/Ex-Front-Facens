@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Calcular média simples</h1>
+            <div class="mb-3">
+                <label for="ac1" class="form-label">ac1</label>
+                <input type="number" class="form-control" id="ac1" name="ac1" [(ngModel)]="ac1">
+            </div>
+            <div class="mb-3">
+                <label for="ac2" class="form-label">ac2</label>
+                <input type="number" class="form-control" id="ac2" name="ac2" [(ngModel)]="ac2">
+            </div>
+            <div class="mb-3">
+                <label for="ag" class="form-label">ag</label>
+                <input type="number" class="form-control" id="ag" name="ag" [(ngModel)]="ag">
+            </div>
+            <div class="mb-3">
+                <label for="af" class="form-label">af</label>
+                <input type="number" class="form-control" id="af" name="af" [(ngModel)]="af">
+            </div>
+            <button class="btn btn-primary" (click)="calcularMedia()">Calcular</button>
+            <div class="mb-3">
+                <label for="media" class="form-label">Média</label>
+                <input type="number" class="form-control" id="media" name="media" [(ngModel)]="media">
+            </div>
+            <!-- EXEMPLO UTILIZANDO NGIF-->
+            <div *ngIf="media >= 5" class="alert alert-success" role="alert">
+                Você está APROVADO!
+            </div>
+            <div *ngIf="media < 5" class="alert alert-danger" role="alert">
+                Você está REPROVADO!
+            </div>
+             <!-- EXEMPLO UTILIZANDO NGCLASS-->
+             <div class="alert" [ngClass]="{'alert-danger': media < 5, 'alert-success' : media >= 5}" role="alert">
+               {{media== undefined ? '' :  media >= 5 ? 'Você está APROVADO!' : 'Você está REPROVADO!'}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+    <link href="assets/jquery.toast.min.css" rel="stylesheet">
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourse">
+                    <i class="bi bi-plus"></i>
+                    Adicionar
+                </button>
+
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Course</th>
+                            <th>Quantidade de horas</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabCourse">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="addCourse" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModal">Adicionar Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="frmCourse">
+                        <input type="hidden" id="id" name="id">
+                        <div class="mb-3">
+                            <label for="Course" class="form-label">Course</label>
+                            <input type="text" class="form-control" id="Course" name="Course" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="QtdHoras" class="form-label">Quantidade de Horas</label>
+                            <input type="text" class="form-control" id="email" name="QtdHoras" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Descrição</label>
+                            <input type="text" class="form-control" id="Description" name="Description" required>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="btnSalvar" type="button" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script src="assets/jquery.toast.min.js"></script>
+
+    <script>        
+
+
+        getCourse();
+
+        jQuery("#btnSalvar").click(function () {
+            if (jQuery("#id").val() != '')
+                putCourse(jQuery("#id").val(), jQuery("#frmCourse").serialize());
+            else
+                postCourse();
+        });
+
+        jQuery("body").on("click", ".btnEditar", function () {
+            getCourseById(jQuery(this).data("id"));
+        });
+
+
+        jQuery("body").on("click", ".btnExcluir", function () {
+            deleteCourse(jQuery(this).data("id"));
+        });
+
+        jQuery("#addCourse").on('show.bs.modal', function (e) {
+            if (jQuery("#id").val() == '')
+                jQuery("#tituloModal").html('Adicionar Course');
+            else
+                jQuery("#tituloModal").html('Editar Course');
+        });
+
+        jQuery("#addCourse").on('hidden.bs.modal', function (e) {
+            limparFormCourse();
+        });
+
+
+        jQuery("#addCourse").on('show.bs.modal', function (e) {
+            if (jQuery("#id").val() == '')
+                jQuery("#tituloModal").html('Adicionar Course');
+            else
+                jQuery("#tituloModal").html('Editar Course');
+        });
+
+
+        function getCourse() {
+            jQuery("#tabCourse").html('');
+            jQuery.get("https://618467a2ac0b850017489e36.mockapi.io/Ex6", function (data) {     
+                jQuery(data).each(function (i, e) {    
+                    jQuery("#tabCourse").append("<tr><td>" + e.id + "</td><td>" + e.Course + "</td><td>" + e.QtdHoras + "</td><td>" + e.Description + "</td><td>" +
+                        "<button class = 'btn btn-primary btnEditar' data-id='" + e.id + "'><i class='bi bi-pencil-square'></i> Editar </button>" +
+                        "<button class = 'btn btn-danger btnExcluir' data-id='" + e.id + "'><i class='bi bi-trash'></i> Excluir </button>" +
+                        "</td></tr>");  
+                });
+            });
+        }
+
+        function postCourse() {
+            jQuery.post("https://618467a2ac0b850017489e36.mockapi.io/Ex6", jQuery("#frmCourse").serialize(), function (data) {
+                jQuery("#addCourse").modal('toggle');
+                jQuery.toast({ text: "Salvo com sucesso", bgColor: 'green', position: "top-right" });
+                getCourse();
+                jQuery
+            });
+        }
+
+        function deleteCourse(id) {
+            jQuery.ajax({
+                url: "https://618467a2ac0b850017489e36.mockapi.io/Ex6/" + id,
+                method: "DELETE",
+                success: function () {
+                    jQuery.toast({ text: "Excluído com sucesso!", bgColor: 'green', position: "top-right" });
+                    getCourse();
+                },
+                error: function () {
+                    jQuery.toast({ text: "Erro ao excluir", bgColor: "red", position: "top-right" });
+                }
+            });
+        }
+
+        function getCourseById(id) {
+            jQuery.get("https://618467a2ac0b850017489e36.mockapi.io/Ex6/" + id, function (data) {
+                jQuery("#id").val(data.id);
+                jQuery("#nome").val(data.nome);
+                jQuery("#email").val(data.email);
+                jQuery("#senha").val(data.senha);
+
+                jQuery("#addCourse").modal('show');
+            });
+        }
+
+        function putCourse(id, form) {
+            jQuery.ajax({
+                url: "https://618467a2ac0b850017489e36.mockapi.io/Ex6/" + id,
+                method: "PUT",
+                data: form,
+                success: function () {
+                    jQuery("#addCourse").modal('toggle');
+                    jQuery.toast({ text: "Salvo com sucesso!", bgColor: 'green', position: "top-right" });
+                    getCourse();
+                },
+                error: function (error) {
+                    jQuery.toast({ text: "Erro ao excluir: " + error, bgColor: "red", position: "top-right" });
+                }
+            });
+        }
+
+        function limparFormCourse() {
+            jQuery("#id").val('');
+            jQuery("#Course").val('');
+            jQuery("#QtdHoras").val('');
+            jQuery("#Description").val('');
+        }
+
+
+
+    </script>
+</body>
+
+</html>
